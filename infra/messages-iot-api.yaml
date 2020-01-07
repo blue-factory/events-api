@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: messages-iot-api
+  labels:
+    app: messages-iot-api
+    service: messages-iot-api
+spec:
+  ports:
+    - port: 5060
+      name: grpc
+  selector:
+    app: messages-iot-api
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: messages-iot-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messages-iot-api
+  labels:
+    app: messages-iot-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messages-iot-api
+  template:
+    metadata:
+      labels:
+        app: messages-iot-api
+    spec:
+      serviceAccountName: messages-iot-api
+      containers:
+        - name: messages-iot-api
+          image: microapis/messages-iot-api:0.1.0
+          ports:
+            - containerPort: 5060
+          env:
+            - name: PORT
+              value: "5060"
+            - name: HOST
+              value: messages-iot-api
+            - name: PROVIDERS
+              value: nats,mqtt
+            - name: PROVIDER_NATS_API_KEY
+              value: <PROVIDER_NATS_API_KEY>
+            - name: PROVIDER_MQTT_API_KEY
+              value: <PROVIDER_MQTT_API_KEY>
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 400m
+              memory: 1024Mi
