@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  #
+  # MESSAGES API
+  #
+  messages-redis:
+    image: redis
+    # ports:
+    #   - 6379:6379
+  messages-api:
+    container_name: messages-api
+    # image: microapis/messages-api:0.1.1
+    build: ../messages-api
+    ports:
+      - 5050:5050
+    environment:
+      - PORT=5050
+      - REDIS_HOST=messages-redis
+      - REDIS_PORT=6379
+    # depends_on:
+    #   - messages-iot-api
+    links:
+      - messages-redis
+  #
+  # MESSAGES IOT API
+  #
+  # messages-iot-api:
+  #   container_name: messages-iot-api
+  #   build: .
+  #   # image: microapis/messages-iot-api:0.0.1
+  #   ports:
+  #     - 5060:5060
+  #   environment:
+  #     - PORT=5060
+  #     - HOST=messages-iot-api
+  #     - MESSAGES_HOST=messages-api
+  #     - MESSAGES_PORT=5050
+  #     - PROVIDERS=nats,mqtt
+  #     - PROVIDER_NATS_API_KEY=<PROVIDER_NATS_API_KEY>
+  #     - PROVIDER_MQTT_API_KEY=<PROVIDER_MQTT_API_KEY>
