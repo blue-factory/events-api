@@ -6,8 +6,14 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/microapis/messages-iot-api"
+	messagesiot "github.com/microapis/messages-iot-api"
 	"github.com/microapis/messages-iot-api/provider"
+	"github.com/microapis/messages-lib/channel"
+)
+
+var (
+	nats *provider.NatsProvider
+	mqtt *provider.MqttProvider
 )
 
 // Backend ...
@@ -17,7 +23,29 @@ type Backend struct {
 }
 
 // NewBackend ...
-func NewBackend(nats *provider.NatsProvider, mqtt *provider.MqttProvider) *Backend {
+func NewBackend(providers []string) *Backend {
+	var err error
+
+	// define providers slice
+	pp := make([]*channel.Provider, 0)
+
+	// iterate over providers name
+	for _, v := range providers {
+		switch v {
+		case provider.NatsName:
+			nats = provider.NewNats()
+			err = nats.LoadEnv()
+			pp = append(pp, nats.ToProvider())
+		case provider.MqttName:
+			mqtt = provider.NewMqtt()
+			err = mqtt.LoadEnv()
+			pp = append(pp, mqtt.ToProvider())
+		}
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return &Backend{
 		Nats: nats,
 		Mqtt: mqtt,
