@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/microapis/messages-api/channel"
+	"github.com/microapis/messages-lib/channel"
 	messagesiot "github.com/microapis/messages-iot-api"
 	"github.com/nats-io/nats.go"
 	"github.com/stoewer/go-strcase"
@@ -45,6 +45,8 @@ func (np *NatsProvider) Approve(*messagesiot.Message) error {
 
 // Deliver ...
 func (np *NatsProvider) Deliver(m *messagesiot.Message) error {
+	defer np.Conn.Close()
+
 	err := np.Conn.Publish(m.Topic, m)
 	if err != nil {
 		return err

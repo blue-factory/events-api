@@ -3,14 +3,15 @@ package provider
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"github.com/microapis/messages-api/channel"
+	"github.com/microapis/messages-lib/channel"
 	messagesiot "github.com/microapis/messages-iot-api"
-	"github.com/nats-io/nats.go"
 	"github.com/stoewer/go-strcase"
 )
 
@@ -83,16 +84,19 @@ func (mp *MqttProvider) ToProvider() *channel.Provider {
 }
 
 // NewMqttConnection ...
-func NewMqttConnection(address, token string) (*nats.EncodedConn, error) {
-	natsConn, err := nats.Connect(address, nats.Token(token))
-	if err != nil {
+func NewMqttConnection(address, token string) (mqtt.Client, error) {
+	opts := mqtt.NewClientOptions()
+	opts.AddBroker(fmt.Sprintf("tcp://%s", address))
+	// opts.SetUsername(uri.User.Username())
+	// password, _ := uri.User.Password()
+	// opts.SetPassword(password)
+	opts.SetClientID("client-id")
+	client := mqtt.NewClient(opts)
+	t := client.Connect()
+	for !t.WaitTimeout(3 * time.Second) {
+	}
+	if err := t.Error(); err != nil {
 		return nil, err
 	}
-	c, err := nats.NewEncodedConn(natsConn, nats.JSON_ENCODER)
-	if err != nil {
-		return nil, err
-	}
-	defer c.Close()
-
-	return c, nil
+	return client, nil
 }
