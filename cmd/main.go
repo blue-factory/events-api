@@ -2,109 +2,78 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
-	mc "github.com/microapis/clients-go/messages"
-	"github.com/microapis/messages-api/backend"
-	"github.com/microapis/messages-api/channel"
-	messagesiot "github.com/microapis/messages-iot-api"
 	backendIot "github.com/microapis/messages-iot-api/backend"
-	"github.com/microapis/messages-iot-api/provider"
-)
-
-var (
-	nats *provider.NatsProvider
-	mqtt *provider.MqttProvider
+	"github.com/microapis/messages-lib/service"
 )
 
 func main() {
 	var err error
 
-	// read providers env values
+	// get providers env values
 	providersEnv := os.Getenv("PROVIDERS")
 	if providersEnv == "" {
 		log.Fatal(errors.New("PROVIDERS value not defined"))
 	}
-
 	// define provider slice names
-	ppn := strings.Split(providersEnv, ",")
-	// define providers slice
-	pp := make([]*channel.Provider, 0)
+	providers := strings.Split(providersEnv, ",")
 
-	// iterate over providers name
-	for _, v := range ppn {
-		switch v {
-		case provider.NatsName:
-			nats = provider.NewNats()
-			err = nats.LoadEnv()
-			pp = append(pp, nats.ToProvider())
-		case provider.MqttName:
-			mqtt = provider.NewMqtt()
-			err = mqtt.LoadEnv()
-			pp = append(pp, mqtt.ToProvider())
-		}
-	}
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// read messages-api env values
-	messagesHost := os.Getenv("MESSAGES_HOST")
-	if messagesHost == "" {
-		log.Fatal(errors.New("MESSAGES_HOST value not defined"))
-	}
-	messagesPort := os.Getenv("MESSAGES_PORT")
-	if messagesPort == "" {
-		log.Fatal(errors.New("MESSAGES_PORT value not defined"))
-	}
-
-	// register channel on messages-api
-	addr := fmt.Sprintf("%s:%s", messagesHost, messagesPort)
-
-	host := os.Getenv("HOST")
-	if host == "" {
-		log.Fatal(errors.New("HOST value not defined"))
-	}
-
-	// get grpc port env value:
+	// get grpc port env value
 	port := os.Getenv("PORT")
 	if port == "" {
 		err := errors.New("invalid PORT env value")
 		log.Fatal(err)
 	}
 
-	// create channel to register
-	c := &channel.Channel{
-		Name:      messagesiot.Channel,
-		Host:      host,
-		Port:      port,
-		Providers: pp,
+	// get redis host env value
+	redisHost := os.Getenv("REDIS_HOST")
+	if redisHost == "" {
+		err := errors.New("invalid REDIS_HOST env value")
+		log.Fatal(err)
 	}
 
-	MessagesAPI, err := mc.NewMessagesAPI(addr, "token")
+	// get redis port env value
+	redisPort := os.Getenv("REDIS_PORT")
+	if redisPort == "" {
+		err := errors.New("invalid REDIS_PORT env value")
+		log.Fatal(err)
+	}
+
+	// get redis database env value
+	redisDatabase := os.Getenv("REDIS_DATABASE")
+	if redisDatabase == "" {
+		err := errors.New("invalid REDIS_DATABASE env value")
+		log.Fatal(err)
+	}
+	rd, err := strconv.Atoi(redisDatabase)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 
-	err = MessagesAPI.Register(c)
+	// initialice message backend with Approve and Deliver methods
+	backend := backendIot.NewBackend(providers)
+
+	// initialize api
+	svc, err := service.NewMessageService("IoT", service.ServiceConfig{
+		Port: port,
+
+		RedisHost:     redisHost,
+		RedisPort:     redisPort,
+		RedisDatabase: rd,
+
+		Approve: backend.Approve,
+		Deliver: backend.Deliver,
+	})
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 
-	log.Printf("Channel %v is registered on messages-api with providers: %v", messagesiot.Channel, c.ProvidersNames())
-
-	// define address value to grpc service
-	addr = fmt.Sprintf("0.0.0.0:%s", port)
-
-	// define service with Approve and Deliver methods
-	svc := backendIot.NewBackend(nats, mqtt)
-
-	// start grpc pigeon-ses-api service
-	log.Printf("Serving at %s", addr)
-	if err := backend.ListenAndServe(addr, svc); err != nil {
+	err = svc.Run()
+	if err != nil {
 		log.Fatal(err)
 	}
 }
