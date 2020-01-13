@@ -1,15 +1,8 @@
 # Messages IoT API
 
-Microservice that extends from [Messages API](https://github.com/microapis/messages-api) is responsible for sending iot messages through some real time providers such as NATS or MQTT.
+Microservice implemented from [Messages Lib](https://github.com/microapis/messages-lib) is responsible for sending iot messages through some real time providers such as NATS or MQTT.
 
-As explained in the Messages API repository, it can be seen that there are three models, messages, channel and provider. To know more you can read the readme of Messages API.
-
-## Services Architecture
-
-The solution consists of a central microservice that is connected to the queue and the database. On the other hand, there are several **Channel APIs** implementations that were registered to Messages API.
-
-[![Architecture of
-microservices](./docs/images/messages-iot-architecture.png)](./docs/images/messages-iot-architecture.png)
+As explained in the Messages Lib repository, it can be seen that there are three models, messages, channel and provider. To know more you can read the readme of Messages Lib.
 
 ## Channels
 
