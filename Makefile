@@ -8,7 +8,7 @@
 #
 # Internal variables
 #
-VERSION=0.1.2
+VERSION=0.2.0
 SVC=messages-iot-api
 BIN_PATH=$(PWD)/bin
 BIN=$(BIN_PATH)/$(SVC)
@@ -18,20 +18,28 @@ REGISTRY_URL=$(DOCKER_USER)
 # SVC variables
 #
 PORT=5060
-HOST=localhost
-MESSAGES_HOST=localhost
-MESSAGES_PORT=5050
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DATABASE=1
 PROVIDERS=nats,mqtt
-PROVIDER_NATS_API_KEY=<PROVIDER_NATS_API_KEY>
-PROVIDER_MQTT_API_KEY=<PROVIDER_MQTT_API_KEY>
+PROVIDER_NATS_API_KEY=123
+PROVIDER_MQTT_API_KEY=456
 
 clean c:
 	@echo "[clean] Cleaning bin folder..."
 	@rm -rf bin/
 
+clean-proto cp:
+	@echo "[clean-proto] Cleaning proto files..."
+	@rm -rf proto/*.pb.go || true
+
+proto pro: clean-proto
+	@echo "[proto] Generating proto file..."
+	@protoc --go_out=plugins=grpc:. ./proto/*.proto 
+
 run r:
 	@echo "[running] Running service..."
-	@PROVIDERS=$(PROVIDERS) PROVIDER_SENDGRID_API_KEY=$(PROVIDER_SENDGRID_API_KEY) MESSAGES_HOST=$(MESSAGES_HOST) MESSAGES_PORT=$(MESSAGES_PORT) HOST=$(HOST) PORT=$(PORT) PROVIDER_MANDRILL_API_KEY=$(PROVIDER_MANDRILL_API_KEY) PROVIDER_SES_AWS_KEY_ID=$(PROVIDER_SES_AWS_KEY_ID) PROVIDER_SES_AWS_SECRET_KEY=$(PROVIDER_SES_AWS_SECRET_KEY) PROVIDER_SES_AWS_REGION=$(PROVIDER_SES_AWS_REGION) go run cmd/main.go
+	@PROVIDERS=$(PROVIDERS) PROVIDER_NATS_API_KEY=$(PROVIDER_NATS_API_KEY) PROVIDER_MQTT_API_KEY=$(PROVIDER_MQTT_API_KEY) PORT=$(PORT) REDIS_HOST=$(REDIS_HOST) REDIS_PORT=$(REDIS_PORT) REDIS_DATABASE=$(REDIS_DATABASE) ./bin/$(SVC)
 
 build b:
 	@echo "[build] Building service..."
@@ -63,4 +71,4 @@ stop s:
 	@echo "[docker-compose] Stopping docker-compose..."
 	@docker-compose down
 
-.PHONY: clean c run r build b linux l docker d docker-login dl push p compose co stop s
+.PHONY: clean c clean-proto cp proto pro run r build b linux l docker d docker-login dl push p compose co stop s
