@@ -55,7 +55,10 @@ func main() {
 	}
 
 	// initialice message backend with Approve and Deliver methods
-	backend := backendIot.NewBackend(providers)
+	backend, err := backendIot.NewBackend(providers)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// initialize api
 	svc, err := service.NewMessageService("IoT", service.ServiceConfig{
@@ -72,6 +75,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// run message service
 	err = svc.Run()
 	if err != nil {
 		log.Fatal(err)
