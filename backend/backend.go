@@ -23,7 +23,7 @@ type Backend struct {
 }
 
 // NewBackend ...
-func NewBackend(providers []string) *Backend {
+func NewBackend(providers []string) (*Backend, error) {
 	var err error
 
 	// define providers slice
@@ -43,13 +43,13 @@ func NewBackend(providers []string) *Backend {
 		}
 	}
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return &Backend{
 		Nats: nats,
 		Mqtt: mqtt,
-	}
+	}, nil
 }
 
 // Approve ...
