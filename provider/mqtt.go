@@ -10,7 +10,7 @@ import (
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"github.com/microapis/messages-lib/channel"
+	"github.com/microapis/messages-core/channel"
 	messagesiot "github.com/microapis/messages-iot-api"
 	"github.com/stoewer/go-strcase"
 )

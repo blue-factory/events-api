@@ -42,8 +42,12 @@ spec:
           env:
             - name: PORT
               value: "5060"
-            - name: HOST
-              value: messages-iot-api
+            - name: REDIS_HOST
+              value: messages-redis
+            - name: REDIS_PORT
+              value: 6379
+            - name: REDIS_DATABASE
+              value: 2
             - name: PROVIDERS
               value: nats,mqtt
             - name: PROVIDER_NATS_API_KEY

@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/microapis/messages-lib/channel"
+	"github.com/microapis/messages-core/channel"
 	messagesiot "github.com/microapis/messages-iot-api"
 	"github.com/nats-io/nats.go"
 	"github.com/stoewer/go-strcase"

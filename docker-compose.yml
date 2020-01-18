@@ -22,7 +22,7 @@ services:
       - PORT=5060
       - REDIS_HOST=messages-redis
       - REDIS_PORT=6379
-      - REDIS_DATABASE=1
+      - REDIS_DATABASE=2
       - PROVIDERS=nats,mqtt
       - PROVIDER_NATS_API_KEY=123
       - PROVIDER_MQTT_API_KEY=456

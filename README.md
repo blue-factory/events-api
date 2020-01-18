@@ -1,8 +1,8 @@
 # Messages IoT API
 
-Microservice implemented from [Messages Lib](https://github.com/microapis/messages-lib) is responsible for sending iot messages through some real time providers such as NATS or MQTT.
+Microservice implemented from [Messages Core](https://github.com/microapis/messages-core) is responsible for sending iot messages through some real time providers such as NATS or MQTT.
 
-As explained in the Messages Lib repository, it can be seen that there are three models, messages, channel and provider. To know more you can read the readme of Messages Lib.
+As explained in the Messages Core repository, it can be seen that there are three models, messages, channel and provider. To know more you can read the readme of Messages Core.
 
 ## Channels
 
@@ -12,7 +12,7 @@ Corresponds to the type of notification that could be sent, for this there must 
 
 The provider is an attribute of **channel** and allows to identify what types of messages are available for a specific channel.
 
-In this api we will find the implementation of only 3 providers. Find **Providers** implementation at the [`./provider`](./lib) folder.
+In this api we will find the implementation of only 3 providers. Find **Providers** implementation at the [`./provider`](./provider) folder.
 
 | Name                                   | Protocol         | Description          | ENV (each with prefix `PROVIDER_`) |
 | -------------------------------------- | ---------------- | -------------------- | ---------------------------------- |

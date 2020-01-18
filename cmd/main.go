@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	backendIot "github.com/microapis/messages-iot-api/backend"
-	"github.com/microapis/messages-lib/service"
+	"github.com/microapis/messages-core/service"
 )
 
 func main() {

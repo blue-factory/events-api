@@ -33,12 +33,6 @@ FROM alpine
 # Define service name
 ARG SVC=messages-iot-api
 
-# Go to workdir
-WORKDIR /src/${SVC}
-
-# Install dependencies
-RUN apk add --update ca-certificates wget
-
 # Copy binaries
 COPY --from=builder /go/src/github.com/microapis/${SVC}/bin/${SVC} /usr/bin/${SVC}
 
@@ -46,4 +40,4 @@ COPY --from=builder /go/src/github.com/microapis/${SVC}/bin/${SVC} /usr/bin/${SV
 EXPOSE 5060
 
 # Run service
-CMD ["/bin/sh", "-l", "-c", "$SVC"]
+ENTRYPOINT ["/usr/bin/messages-iot-api"]

@@ -8,7 +8,7 @@ import (
 
 	messagesiot "github.com/microapis/messages-iot-api"
 	"github.com/microapis/messages-iot-api/provider"
-	"github.com/microapis/messages-lib/channel"
+	"github.com/microapis/messages-core/channel"
 )
 
 var (
