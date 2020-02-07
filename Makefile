@@ -9,7 +9,7 @@
 # Internal variables
 #
 VERSION=0.2.0
-SVC=messages-iot-api
+SVC=events-api
 BIN_PATH=$(PWD)/bin
 BIN=$(BIN_PATH)/$(SVC)
 REGISTRY_URL=$(DOCKER_USER)

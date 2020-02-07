@@ -28,8 +28,8 @@ type Backend struct {
 	Mqtt provider.Provider
 }
 
-// NewBackend ...
-func NewBackend(providers []string) (*Backend, error) {
+// New ...
+func New(providers []string) (*Backend, error) {
 	var err error
 
 	// define repetitive msg error sufix
@@ -103,18 +103,18 @@ func NewBackend(providers []string) (*Backend, error) {
 
 // Approve ...
 func (b *Backend) Approve(content string) (valid bool, err error) {
-	log.Println(fmt.Sprintf("[gRPC][MessagesIoTService][Approve][Request] content = %v", content))
+	log.Println(fmt.Sprintf("[gRPC][EventsService][Approve][Request] content = %v", content))
 
 	if content == "" {
 		err := errors.New("Invalid message content")
-		log.Println(fmt.Sprintf("[gRPC][MessagesIoTService][Approve][Error] error = %v", err))
+		log.Println(fmt.Sprintf("[gRPC][EventsService][Approve][Error] error = %v", err))
 		return false, err
 	}
 
 	m := new(events.Message)
 	err = json.Unmarshal([]byte(content), m)
 	if err != nil {
-		log.Println(fmt.Sprintf("[gRPC][MessagesIoTService][Approve][Error] error = %v", err))
+		log.Println(fmt.Sprintf("[gRPC][EventsService][Approve][Error] error = %v", err))
 		return false, err
 	}
 
@@ -128,24 +128,24 @@ func (b *Backend) Approve(content string) (valid bool, err error) {
 		return false, errors.New("invalid provider value")
 	}
 	if err != nil {
-		log.Println(fmt.Sprintf("[gRPC][MessagesIoTService][Approve][Error] error = %v", err))
+		log.Println(fmt.Sprintf("[gRPC][EventsService][Approve][Error] error = %v", err))
 		return false, err
 	}
 
 	log.Println(222)
 
-	log.Println(fmt.Sprintf("[gRPC][MessagesIoTService][Approve][Response] message = %v", m))
+	log.Println(fmt.Sprintf("[gRPC][EventsService][Approve][Response] message = %v", m))
 
 	return true, nil
 }
 
 // Deliver ...
 func (b *Backend) Deliver(content string) error {
-	log.Println(fmt.Sprintf("[gRPC][MessagesIoTService][Deliver][Request] content = %v", content))
+	log.Println(fmt.Sprintf("[gRPC][EventsService][Deliver][Request] content = %v", content))
 	log.Println(111)
 	if content == "" {
 		err := errors.New("Invalid message content")
-		log.Println(fmt.Sprintf("[gRPC][MessagesIoTService][Deliver][Error] error = %v", err))
+		log.Println(fmt.Sprintf("[gRPC][EventsService][Deliver][Error] error = %v", err))
 		return err
 	}
 	log.Println(222)
@@ -153,7 +153,7 @@ func (b *Backend) Deliver(content string) error {
 	m := new(events.Message)
 	err := json.Unmarshal([]byte(content), m)
 	if err != nil {
-		log.Println(fmt.Sprintf("[gRPC][MessagesIoTService][Deliver][Error] error = %v", err))
+		log.Println(fmt.Sprintf("[gRPC][EventsService][Deliver][Error] error = %v", err))
 		return err
 	}
 	log.Println(333)
@@ -165,12 +165,12 @@ func (b *Backend) Deliver(content string) error {
 		err = b.Mqtt.Deliver(m)
 	}
 	if err != nil {
-		log.Println(fmt.Sprintf("[gRPC][MessagesIoTService][Deliver][Error] error = %v", err))
+		log.Println(fmt.Sprintf("[gRPC][EventsService][Deliver][Error] error = %v", err))
 		return err
 	}
 	log.Println(444)
 
-	log.Println(fmt.Sprintf("[gRPC][MessagesIoTService][Deliver][Response] message = %v", m))
+	log.Println(fmt.Sprintf("[gRPC][EventsService][Deliver][Response] message = %v", m))
 
 	return nil
 }

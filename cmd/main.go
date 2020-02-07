@@ -55,13 +55,13 @@ func main() {
 	}
 
 	// initialice message backend with Approve and Deliver methods
-	backend, err := backendNewBackend(providers)
+	backend, err := backend.New(providers)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// initialize api
-	svc, err := service.NewMessageService("IoT", service.ServiceConfig{
+	svc, err := service.NewMessageService("events", service.ServiceConfig{
 		Port: port,
 
 		RedisHost:     redisHost,

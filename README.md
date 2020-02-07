@@ -1,6 +1,6 @@
-# Messages IoT API
+# Events API
 
-Microservice implemented from [Messages Core](https://github.com/microapis/messages-core) is responsible for sending iot messages through some real time providers such as NATS or MQTT.
+Microservice implemented from [Messages Core](https://github.com/microapis/messages-core) is responsible for sending events messages through some real time providers such as NATS or MQTT.
 
 As explained in the Messages Core repository, it can be seen that there are three models, messages, channel and provider. To know more you can read the readme of Messages Core.
 
@@ -14,12 +14,12 @@ The provider is an attribute of **channel** and allows to identify what types of
 
 In this api we will find the implementation of only 3 providers. Find **Providers** implementation at the [`./provider`](./provider) folder.
 
-| Name                                   | Protocol         | Description          | ENV (each with prefix `PROVIDER_`) |
-| -------------------------------------- | ---------------- | -------------------- | ---------------------------------- |
-| [Nats](https://nats.io/)               | nats             | On premise its free. | `NATS_API_KEY`: string             |
-| [MQTT](https://mqtt.org/)              | mqtt             | On premise its free. | `MQTT_API_KEY`: string             |
-| [AWS IoT](https://aws.amazon.com/iot/) | mqtt             | Coming soon.         | Coming soon.                       |
-| [Azure IoT](https://mandrill.com/)     | mqtt, amqp, http | Coming soon.         | Coming soon.                       |
+| Name                                      | Protocol         | Description          | ENV (each with prefix `PROVIDER_`) |
+| ----------------------------------------- | ---------------- | -------------------- | ---------------------------------- |
+| [Nats](https://nats.io/)                  | nats             | On premise its free. | `NATS_API_KEY`: string             |
+| [MQTT](https://mqtt.org/)                 | mqtt             | On premise its free. | `MQTT_API_KEY`: string             |
+| [AWS Events](https://aws.amazon.com/iot/) | mqtt             | Coming soon.         | Coming soon.                       |
+| [Azure Events](https://mandrill.com/)     | mqtt, amqp, http | Coming soon.         | Coming soon.                       |
 
 ## gRPC Service
 
@@ -33,7 +33,7 @@ service MessageBackendService {
 ## Model
 
 ```go
-IoT {
+Event {
   topic:      string
   payload:    map[string]string
   Provider:   string    // nats, mqtt
@@ -48,19 +48,22 @@ IoT {
 
 `make docker`: build docker.
 
-`docker run -it -p 5060:5060 messages-iot-api`: run docker.
+`docker run -it -p 5060:5060 events-api`: run docker.
 
-**Run Iot Messages API:**
+**Run Events API:**
 
 ```sh
 HOST=<host> \
 PORT=<port> \
-MESSAGES_HOST=<messages-host> \
-MESSAGES_PORT=<messages-port> \
+REDIS_HOST=<redis-host> \
+REDIS_PORT=<redis-port> \
+REDIS_DATABASE=<redis-database> \
 PROVIDERS=<providers> \
-PROVIDER_NATS_API_KEY=<> \
-PROVIDER_MQTT_API_KEY=<> \
-./bin/messages-iot-api
+PROVIDER_NATS_API_KEY=<providers-nats-api-key> \
+PROVIDER_NATS_HOST=<providers-nats-host>
+PROVIDER_NATS_PORT=<providers-nats-port> \
+PROVIDER_MQTT_API_KEY=<providers-nats-api-key> \
+./bin/events-api
 ```
 
 ## TODO

@@ -1,49 +1,49 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: messages-iot-api
+  name: events-api
   labels:
-    app: messages-iot-api
-    service: messages-iot-api
+    app: events-api
+    service: events-api
 spec:
   ports:
     - port: 5060
       name: grpc
   selector:
-    app: messages-iot-api
+    app: events-api
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: messages-iot-api
+  name: events-api
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: messages-iot-api
+  name: events-api
   labels:
-    app: messages-iot-api
+    app: events-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: messages-iot-api
+      app: events-api
   template:
     metadata:
       labels:
-        app: messages-iot-api
+        app: events-api
     spec:
-      serviceAccountName: messages-iot-api
+      serviceAccountName: events-api
       containers:
-        - name: messages-iot-api
-          image: microapis/messages-iot-api:0.1.0
+        - name: events-api
+          image: microapis/events-api:0.1.0
           ports:
             - containerPort: 5060
           env:
             - name: PORT
               value: "5060"
             - name: REDIS_HOST
-              value: messages-redis
+              value: events-redis
             - name: REDIS_PORT
               value: 6379
             - name: REDIS_DATABASE
