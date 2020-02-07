@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	backendIot "github.com/microapis/messages-iot-api/backend"
+	"github.com/microapis/events-api/backend"
 	"github.com/microapis/messages-core/service"
 )
 
@@ -55,7 +55,7 @@ func main() {
 	}
 
 	// initialice message backend with Approve and Deliver methods
-	backend, err := backendIot.NewBackend(providers)
+	backend, err := backendNewBackend(providers)
 	if err != nil {
 		log.Fatal(err)
 	}
